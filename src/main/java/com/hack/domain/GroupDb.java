@@ -9,4 +9,5 @@ public class GroupDb {
     private String groupName;
     private String des;         //描述
     private String remark;
+    private String groupPic;    //组图片
 }

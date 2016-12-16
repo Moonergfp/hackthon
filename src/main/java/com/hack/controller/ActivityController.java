@@ -106,6 +106,9 @@ public class ActivityController {
         try {
             activityDb = activityDao.getById(id);
             LogConstant.runLog.info("#ActivityController.getById#activityDb={}", activityDb);
+            if(activityDb == null){
+                return new JSONUtil().constructResponse(401, "活动不存在", activityDb);
+            }
             String groupIds = activityDb.getGroupIdList();
             if (!Strings.isNullOrEmpty(groupIds)) {
                 List<Integer> groupIdList = Lists.transform(Lists.newArrayList(Splitter.on(",").split(groupIds)), new Function<String, Integer>() {

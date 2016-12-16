@@ -3,6 +3,7 @@ package com.hack.dao;
 import com.hack.cons.TableCons;
 import com.hack.domain.GroupDb;
 import com.hack.domain.UserDb;
+import com.hack.vo.GroupMem;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Options;
@@ -21,9 +22,9 @@ import static org.apache.ibatis.jdbc.SelectBuilder.*;
 @Repository
 public interface GroupDao {
 
-    String INSERT_FILEDS = "group_name,remark,des";
+    String INSERT_FILEDS = "group_name,remark,des,group_pic";
     String SELECT_FIELDS = "id," + INSERT_FILEDS;
-    String INSERT_VALUES = "#{groupName},#{remark},#{des}";
+    String INSERT_VALUES = "#{groupName},#{remark},#{des},#{groupPic}";
 
     @Insert("insert into " + TableCons.GROUP_TABLE + "(" + INSERT_FILEDS + ") values (" + INSERT_VALUES + ")")
     @Options(useGeneratedKeys = true)
@@ -35,6 +36,9 @@ public interface GroupDao {
     @SelectProvider(type = SqlProvider.class, method = "getByIds")
     List<GroupDb> getByIds(@Param("groupIdList") List<Integer> groupIdList);
 
+//    @SelectProvider(type = SqlProvider.class, method = "getUserGroupAndMems")
+//    List<GroupMem> getUserGroupAndMems(int userId);
+
     class SqlProvider {
         public String getByIds(Map<String,Object> param) {
             List<Integer> ids = ( List<Integer>) param.get("groupIdList");
@@ -44,6 +48,9 @@ public interface GroupDao {
             WHERE("id in ("+ StringUtils.join(ids,",")+")");
             return SQL();
         }
+
+
+
     }
 
 }

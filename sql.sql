@@ -15,6 +15,7 @@ CREATE TABLE `hk_group` (
  `id` int unsigned NOT NULL  AUTO_INCREMENT,
  `group_name` varchar(255) default '' comment '组名',
  `des` varchar(2000) default '' comment '描述',
+ `group_pic` varchar(255) default '' comment '群组图片',
  `remark` varchar(255) default '' comment '备注',
    PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1  DEFAULT CHARSET=utf8mb4 comment '组表';

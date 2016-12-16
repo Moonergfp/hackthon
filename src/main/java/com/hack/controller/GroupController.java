@@ -21,6 +21,7 @@ import com.hack.util.HttpUtil;
 import com.hack.util.JSONUtil;
 import com.hack.util.LogConstant;
 import com.hack.vo.GroupBatch;
+import com.hack.vo.GroupMem;
 import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Controller;
@@ -33,6 +34,7 @@ import java.io.IOException;
 import java.security.acl.Group;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
@@ -135,6 +137,11 @@ public class GroupController {
         }
     }
 
+
+    public static  void main(String[] args){
+       int n = 5;
+        System.out.println(new Random().nextInt(n));
+    }
 
     @ResponseBody
     @RequestMapping("/{groupId}")
@@ -270,5 +277,38 @@ public class GroupController {
         }
         return new JSONUtil().constructResponse(200, "成功", null);
     }
+
+    /**
+     * 通过用户id获取群组列表以及群组中的成员列表
+     * @param userId
+     * @return
+     */
+//    @ResponseBody
+//    @RequestMapping("/getUserGroupAndMems")
+//    public Object getUserGroupAndMems(int userId) {
+//        LogConstant.runLog.info("#GroupController.getUserGroupAndMems#userId={}", userId);
+//        if(userId <= 0){
+//            return new JSONUtil().constructResponse(401,"参数错误" , null);
+//        }
+//        List<GroupMem> groupMemList = null;
+//        try{
+//            List<GroupUserRelationDb> groupUserRelationDbList =  groupUserRelationDao.getByUserId(userId);
+//            if(CollectionUtils.isEmpty(groupUserRelationDbList)){
+//                return JSONUtil.constructResponse(200, "成功", groupMemList);
+//            }
+//            List<Integer> groupIdList = Lists.newArrayList();
+//            for(GroupUserRelationDb groupUserRelationDb : groupUserRelationDbList){
+//                groupIdList.add(groupUserRelationDb.getId());
+//            }
+//            = groupDao.getUserGroupAndMems(userId);
+//        }
+//
+//    }
+
+
+
+
+
+
 
 }

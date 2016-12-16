@@ -21,6 +21,7 @@ import javax.annotation.Resource;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
@@ -33,12 +34,21 @@ public class GroupService {
     private ActivityDao activityDao;
 
     private static final String createGroupUrl = PropertyUtil.getProperty("createGroupUrl");
+    private List<String> groupPicUrls = Lists.newArrayList(
+            "http://p1.meituan.net/440.320/sjstpic/6a3d722ee9c17539010b15b6980a97f776564.jpg",
+            "http://p0.meituan.net/440.320/sjstpic/c3b3ff72da77aee63b77556ad9a21254425323.jpg",
+            "http://p1.meituan.net/kuailv/15efe176736b7ce2bad1a387458119b3121461.png",
+            "http://p1.meituan.net/kuailv/6901d0fb4a8cc827ac431eb672b56f969941.jpeg",
+            "http://p0.meituan.net/kuailv/ddd08b157c7eda797cbea093a1d1fe2110190.jpg",
+            "http://p0.meituan.net/kuailv/5c5dd95cd0bfa29ac7d602244843d63616100.jpg",
+            "http://p0.meituan.net/kuailv/70b2c1ab6281cc1605667cb1f28896219493.png");
 
     @Transactional(rollbackFor = Exception.class)
     public List<Integer> batchCreateDb(int activityId, List<GroupDb> groupDbList) throws IOException {
         List<Integer> groupIdList = Lists.newArrayList();
         for (GroupDb groupDb : groupDbList) {
             checkArgument(!Strings.isNullOrEmpty(groupDb.getGroupName()),"组名为空");
+            groupDb.setGroupPic(groupPicUrls.get(new Random().nextInt(groupPicUrls.size())));
             boolean createGroupSucceed = groupDao.insert(groupDb) > 0 ? true : false;
             groupIdList.add(groupDb.getId());
             LogConstant.runLog.info("#GroupController.create#createGroupSucceed = {}", createGroupSucceed);
