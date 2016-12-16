@@ -28,6 +28,9 @@ public interface GroupUserRelationDao {
     @Delete("delete from " + TableCons.GROUP_RELATION_TABLE + " where group_id=#{groupId} and user_id=#{userId}")
     int deleteByGroupIdAndUserId(@Param("groupId") int groupId, @Param("userId") int userId);
 
+    @Select("select " +SELECT_FIELDS + " from "  + TableCons.GROUP_RELATION_TABLE + " where group_id=#{groupId} and user_id=#{userId}")
+    GroupUserRelationDb getByGroupIdAndUserId(@Param("groupId") int groupId, @Param("userId") int userId);
+
 
     class Provider {
         public String getUsersByGroupId(int groupId) {

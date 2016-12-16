@@ -62,7 +62,7 @@ public class GroupController {
      * @return
      */
     @ResponseBody
-    @RequestMapping(value = "/batchCreate",method = RequestMethod.POST)
+    @RequestMapping(value = "/batchCreate", method = RequestMethod.POST)
     @Transactional
     public Object batchCreate(@RequestBody GroupBatch batch) {
         LogConstant.runLog.info("#GroupController.batchCreate#batch={}", batch);
@@ -70,24 +70,22 @@ public class GroupController {
         try {
             checkArgument(batch.getActivityId() > 0, "活动id为空");
             checkArgument(!CollectionUtils.isEmpty(batch.getGroupList()), "组列表为空");
-            groupIdList = groupService.batchCreateDb(batch.getActivityId(),batch.getGroupList());
+            groupIdList = groupService.batchCreateDb(batch.getActivityId(), batch.getGroupList());
             LogConstant.runLog.info("#GroupController.batchCreate#groupIdList={}", groupIdList);
         } catch (IllegalArgumentException e) {
             LogConstant.runLog.error("#GroupController.batchCreate#param error", e);
             return new JSONUtil().constructResponse(402, e.getMessage(), null);
-        }catch (Exception e){
+        } catch (Exception e) {
             LogConstant.runLog.error("#GroupController.batchCreate#param error", e);
-            return new JSONUtil().constructResponse(500,"系统错误",null);
+            return new JSONUtil().constructResponse(500, "系统错误", null);
         }
         if (!CollectionUtils.isEmpty(groupIdList)) {
-            return new JSONUtil().constructResponse(200, "成功",groupIdList);
+            return new JSONUtil().constructResponse(200, "成功", groupIdList);
         } else {
             return new JSONUtil().constructResponse(401, "失败", null);
         }
 
     }
-
-
 
 
     /**
@@ -190,28 +188,34 @@ public class GroupController {
         try {
             checkArgument(groupUserRelationDb.getGroupId() > 0, "参数错误");
             checkArgument(groupUserRelationDb.getUserId() > 0, "参数错误");
+            GroupDb groupDb = groupDao.getById(groupUserRelationDb.getGroupId());
+            if (groupDb == null) {
+                return new JSONUtil().constructResponse(402, "群不存在", null);
+            }
+            //查询是否入群
+            GroupUserRelationDb gRDb = groupUserRelationDao.getByGroupIdAndUserId(groupUserRelationDb.getGroupId(), groupUserRelationDb.getUserId());
+            if (gRDb != null) {
+                return new JSONUtil().constructResponse(200, "已加入", null);
+            }
             int num = groupUserRelationDao.insert(groupUserRelationDb);
             LogConstant.runLog.info("#GroupController.add#num={}", num);
             if (num <= 0) {
                 return new JSONUtil().constructResponse(401, "成功", null);
             }
+            Map<String, String> param = Maps.newHashMap();
+            param.put("userId", String.valueOf(groupUserRelationDb.getUserId()));
+            param.put("groupId", String.valueOf(groupUserRelationDb.getGroupId()));
+            param.put("groupName", groupDb.getGroupName());
+            String resp = HttpUtil.postNoRetry(joinGroupUrl, param, 10000, 10000);
+            LogConstant.runLog.info("#GroupController.add#join rong yun  resp= {}", resp);
 
-            GroupDb groupDb = groupDao.getById(groupUserRelationDb.getId());
-            if (groupDb != null) {
-                Map<String, String> param = Maps.newHashMap();
-                param.put("userId", String.valueOf(groupUserRelationDb.getUserId()));
-                param.put("groupId", String.valueOf(groupUserRelationDb.getGroupId()));
-                param.put("groupName", groupDb.getGroupName());
-                String resp = HttpUtil.postNoRetry(joinGroupUrl, param, 10000, 10000);
-                LogConstant.runLog.info("#GroupController.add#join rong yun  resp= {}", resp);
-
-                if (!Strings.isNullOrEmpty(resp)) {
-                    JSONObject jsonObject = JSON.parseObject(resp);
-                    if (jsonObject.getInteger("code") != 200) {
-                        return new JSONUtil().constructResponse(401, "操作失败", null);
-                    }
+            if (!Strings.isNullOrEmpty(resp)) {
+                JSONObject jsonObject = JSON.parseObject(resp);
+                if (jsonObject.getInteger("code") != 200) {
+                    return new JSONUtil().constructResponse(401, "操作失败", null);
                 }
             }
+
         } catch (IllegalArgumentException e2) {
             LogConstant.runLog.error("#UserController.register#sys error", e2);
             return new JSONUtil().constructResponse(401, e2.getMessage(), null);
