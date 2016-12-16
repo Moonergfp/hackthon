@@ -4,25 +4,32 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.hack.conf.PropertyUtil;
+import com.hack.dao.ActivityDao;
 import com.hack.dao.GroupDao;
 import com.hack.dao.GroupUserRelationDao;
 import com.hack.dao.UserDao;
+import com.hack.domain.ActivityDb;
 import com.hack.domain.GroupDb;
 import com.hack.domain.GroupUserRelationDb;
 import com.hack.domain.UserDb;
+import com.hack.exception.HackException;
+import com.hack.service.GroupService;
 import com.hack.util.HttpUtil;
 import com.hack.util.JSONUtil;
 import com.hack.util.LogConstant;
+import com.hack.vo.GroupBatch;
+import lombok.Data;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.io.IOException;
 import java.security.acl.Group;
 import java.util.List;
 import java.util.Map;
@@ -37,11 +44,50 @@ public class GroupController {
     private GroupDao groupDao;
     @Resource
     private GroupUserRelationDao groupUserRelationDao;
+    @Resource
+    private ActivityDao activityDao;
+    @Resource
+    private GroupService groupService;
+
 
     private static final String getTokenUrl = PropertyUtil.getProperty("getTokenUrl");
     private static final String createGroupUrl = PropertyUtil.getProperty("createGroupUrl");
     private static final String joinGroupUrl = PropertyUtil.getProperty("joinGroupUrl");
     private static final String bakGroupUrl = PropertyUtil.getProperty("bakGroupUrl");
+
+
+    /**
+     * 创建群组
+     *
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value = "/batchCreate",method = RequestMethod.POST)
+    @Transactional
+    public Object batchCreate(@RequestBody GroupBatch batch) {
+        LogConstant.runLog.info("#GroupController.batchCreate#batch={}", batch);
+        List<Integer> groupIdList = null;
+        try {
+            checkArgument(batch.getActivityId() > 0, "活动id为空");
+            checkArgument(!CollectionUtils.isEmpty(batch.getGroupList()), "组列表为空");
+            groupIdList = groupService.batchCreateDb(batch.getActivityId(),batch.getGroupList());
+            LogConstant.runLog.info("#GroupController.batchCreate#groupIdList={}", groupIdList);
+        } catch (IllegalArgumentException e) {
+            LogConstant.runLog.error("#GroupController.batchCreate#param error", e);
+            return new JSONUtil().constructResponse(402, e.getMessage(), null);
+        }catch (Exception e){
+            LogConstant.runLog.error("#GroupController.batchCreate#param error", e);
+            return new JSONUtil().constructResponse(500,"系统错误",null);
+        }
+        if (!CollectionUtils.isEmpty(groupIdList)) {
+            return new JSONUtil().constructResponse(200, "成功",groupIdList);
+        } else {
+            return new JSONUtil().constructResponse(401, "失败", null);
+        }
+
+    }
+
+
 
 
     /**

@@ -23,8 +23,8 @@ public interface ActivityDao {
     ActivityDb getById(int id);
 
 
-    @Update("update " +TableCons.ACTIVITY_TABLE + " set group_list=#{groupList} where id =#{id}")
-    int updateGroupList(int id,String groupList);
+    @Update("update " +TableCons.ACTIVITY_TABLE + " set group_id_list=#{groupIdList} where id =#{id}")
+    int updateGroupList(@Param("id") int id,@Param("groupIdList") String groupIdList);
 
     @Select("select "+ SELECT_FIELDS+ " from "+TableCons.ACTIVITY_TABLE)
     List<ActivityDb> list();

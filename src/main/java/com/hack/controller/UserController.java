@@ -39,7 +39,7 @@ public class UserController {
             checkArgument(!Strings.isNullOrEmpty(userDb.getAcct()), "账号为空");
             checkArgument(!Strings.isNullOrEmpty(userDb.getName()), "名字为空");
             checkArgument(!Strings.isNullOrEmpty(userDb.getPwd()), "密码为空");
-            userDb.setHeadPic("http://p0.meituan.net/kuailv/70b2c1ab6281cc1605667cb1f28896219493.png");
+            userDb.setHeadPic(basicHeadPicUrl);
             succeed = userDao.insert(userDb) > 0 ? true : false;
             LogConstant.runLog.info("#UserController.register#register succeed = {}", succeed);
         } catch (IllegalArgumentException e2) {
