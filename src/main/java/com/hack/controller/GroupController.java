@@ -153,6 +153,7 @@ public class GroupController {
                 result = new JSONObject();
                 result.put("groupId", groupDb.getId());
                 result.put("groupName", groupDb.getGroupName());
+                result.put("des", groupDb.getDes());
                 List<UserDb> users = groupUserRelationDao.getUsersByGroupId(groupDb.getId());
                 if (!CollectionUtils.isEmpty(users)) {
                     JSONArray jaUser = new JSONArray();
