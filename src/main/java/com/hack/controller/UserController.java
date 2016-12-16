@@ -37,10 +37,14 @@ public class UserController {
         try {
             checkArgument(!Strings.isNullOrEmpty(userDb.getAcct()), "账号为空");
             checkArgument(!Strings.isNullOrEmpty(userDb.getName()), "名字为空");
+            checkArgument(!Strings.isNullOrEmpty(userDb.getPwd()), "密码为空");
+            userDb.setHeadPic("http://p0.meituan.net/kuailv/70b2c1ab6281cc1605667cb1f28896219493.png");
             succeed = userDao.insert(userDb) > 0 ? true : false;
             LogConstant.runLog.info("#UserController.register#register succeed = {}", succeed);
+        } catch (IllegalArgumentException e2) {
+            LogConstant.runLog.error("#UserController.register#sys error", e2);
+            return new JSONUtil().constructResponse(401, e2.getMessage(), null);
         } catch (Exception e) {
-            e.printStackTrace();
             LogConstant.runLog.error("#UserController.register#sys error", e);
             return new JSONUtil().constructResponse(500, "系统错误", null);
         }
@@ -82,8 +86,11 @@ public class UserController {
                 jsonResult.put("userId", userId);
                 //更新token
 
-                userDao.updateToken(userDb.getId(),jsonResult.getString("token"));
+                userDao.updateToken(userDb.getId(), jsonResult.getString("token"));
             }
+        } catch (IllegalArgumentException e2) {
+            LogConstant.runLog.error("#UserController.register#sys error", e2);
+            return new JSONUtil().constructResponse(401, e2.getMessage(), null);
         } catch (Exception e) {
             e.printStackTrace();
             LogConstant.runLog.error("#UserController.register#sys error", e);

@@ -39,12 +39,12 @@
 
     <!-- Application Loggers -->
     <logger name="jmonitor" additivity="false">
-        <level value="info" />
+        <level value="debug" />
         <appender-ref ref="jmonitorappender" />
     </logger>
 
     <logger name="jmonitorlogstore" additivity="false">
-        <level value="info" />
+        <level value="debug" />
         <appender-ref ref="jmonitorlogstoreappender" />
     </logger>
 
@@ -54,23 +54,23 @@
 
     <!-- 3rdparty Loggers -->
     <logger name="org.springframework.core">
-        <level value="info"/>
+        <level value="debug"/>
     </logger>
 
     <logger name="org.springframework.beans">
-        <level value="info"/>
+        <level value="debug"/>
     </logger>
 
     <logger name="org.springframework.context">
-        <level value="info"/>
+        <level value="debug"/>
     </logger>
 
     <logger name="org.springframework.web">
-        <level value="info"/>
+        <level value="debug"/>
     </logger>
     <!-- Root Logger -->
     <root>
-        <priority value="info"/>
+        <priority value="debug"/>
         <appender-ref ref="console"/>
         <appender-ref ref="logfile"/>
         <appender-ref ref="errorlog"/>

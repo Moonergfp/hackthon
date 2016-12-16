@@ -15,6 +15,7 @@ CREATE TABLE `hk_user` (
 CREATE TABLE `hk_group` (
  `id` int unsigned NOT NULL  AUTO_INCREMENT,
  `group_name` varchar(255) default '' comment '组名',
+ `des` varchar(2000) default '' comment '描述',
  `remark` varchar(255) default '' comment '备注',
    PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1  DEFAULT CHARSET=utf8mb4 comment '组表';
@@ -37,3 +38,15 @@ CREATE TABLE `hk_group_relation` (
  `group_id` int unsigned default 0,
    PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1  DEFAULT CHARSET=utf8mb4 comment '用户组关系表';
+
+
+
+CREATE TABLE `hk_activity` (
+ `id` int unsigned NOT NULL  AUTO_INCREMENT,
+ `name` varchar(255) default '' comment '账号',
+ `title` varchar(255) default '' comment '账号',
+ `text` varchar(2000) default '' comment '昵称',
+ `group_id_list` varchar(255) default '' comment 'token',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 comment '活动表';
+
