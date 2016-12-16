@@ -28,6 +28,7 @@ public class UserController {
     private UserDao userDao;
 
     private static final String getTokenUrl = PropertyUtil.getProperty("getTokenUrl");
+    private static final String basicHeadPicUrl = PropertyUtil.getProperty("basicHeadPicUrl");
 
     @ResponseBody
     @RequestMapping("/register")
@@ -62,7 +63,8 @@ public class UserController {
     public Object login(String acct, String pwd) {
         LogConstant.runLog.info("#UserController.login#acct={},pwd=#{}", acct, pwd);
         boolean succeed = false;
-        JSONObject jsonResult = null;
+
+        JSONObject result = new JSONObject();
         try {
             checkArgument(!Strings.isNullOrEmpty(acct), "账号为空");
             checkArgument(!Strings.isNullOrEmpty(pwd), "密码为空");
@@ -71,33 +73,42 @@ public class UserController {
             if (userDb == null) {
                 return new JSONUtil().constructResponse(402, "用户不存在", null);
             }
+            if(!Strings.isNullOrEmpty(userDb.getToken())){
+                result.put("userId",userDb.getId());
+                result.put("headPic",userDb.getHeadPic());
+                result.put("token",userDb.getToken());
+                result.put("acct",userDb.getAcct());
+                result.put("name",userDb.getName());
+                return new JSONUtil().constructResponse(200, "成功", result);
+            }
             int userId = userDb.getId();
-
             //获取token
             Map<String, String> param = Maps.newHashMap();
             param.put("userId", String.valueOf(userId));
             param.put("name", userDb.getName());
-            param.put("portraitUri", "http://p0.meituan.net/460.280/deal/f4ae26308ae29c0b7f151a962dbeca3a52723.jpg");
+            param.put("portraitUri", basicHeadPicUrl);
             String reponse = HttpUtil.postNoRetry(getTokenUrl, param, 5000, 5000);
             LogConstant.runLog.info("#UserController.login#reponse={}", reponse);
-            jsonResult = JSON.parseObject(reponse);
+            JSONObject jsonResult = JSON.parseObject(reponse);
             if (jsonResult != null && jsonResult.getInteger("code") == 200) {
                 succeed = true;
-                jsonResult.put("userId", userId);
+                result.put("userId",userDb.getId());
+                result.put("headPic",userDb.getHeadPic());
+                result.put("token",jsonResult.getString("token"));
+                result.put("acct",userDb.getAcct());
+                result.put("name",userDb.getName());
                 //更新token
-
                 userDao.updateToken(userDb.getId(), jsonResult.getString("token"));
             }
         } catch (IllegalArgumentException e2) {
             LogConstant.runLog.error("#UserController.register#sys error", e2);
             return new JSONUtil().constructResponse(401, e2.getMessage(), null);
         } catch (Exception e) {
-            e.printStackTrace();
             LogConstant.runLog.error("#UserController.register#sys error", e);
             return new JSONUtil().constructResponse(500, "系统错误", null);
         }
         if (succeed) {
-            return new JSONUtil().constructResponse(200, "成功", jsonResult);
+            return new JSONUtil().constructResponse(200, "成功", result);
         } else {
             return new JSONUtil().constructResponse(401, "失败", null);
         }
