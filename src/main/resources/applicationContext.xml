@@ -9,19 +9,9 @@
        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
        http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-3.0.xsd
        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
-    
-    <context:component-scan base-package="com.demo.**" />
 
-    <bean id="pointCutClazz" class="com.demo.aop.PointCutClazz" />
-    <aop:config>
-        <aop:aspect id="pointCutClazzId" ref="pointCutClazz">
-            <!--service目录下的（包括子目录下）任意方法-->
-            <aop:pointcut id="myPointCut" expression="execution(* com.demo.aop.service..*(..))" />
-            <aop:before method="invokeMethod" pointcut-ref="myPointCut" />
-        </aop:aspect>
-        <!--可以配置多个切面-->
-    </aop:config>
+	<import resource="datasource.xml" />
+    <context:component-scan base-package="com.hack.**" />
 
-    <aop:aspectj-autoproxy />
-    
+
 </beans>
