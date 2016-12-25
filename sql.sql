@@ -18,7 +18,7 @@ CREATE TABLE `hk_group` (
  `group_pic` varchar(255) default '' comment '群组图片',
  `remark` varchar(255) default '' comment '备注',
    PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1  DEFAULT CHARSET=utf8mb4 comment '组表';
+) ENGINE=InnoDB AUTO_INCREMENT=100  DEFAULT CHARSET=utf8mb4 comment '组表';
 
 
 
@@ -48,5 +48,5 @@ CREATE TABLE `hk_activity` (
  `text` varchar(2000) default '' comment '昵称',
  `group_id_list` varchar(255) default '' comment 'token',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 comment '活动表';
+) ENGINE=InnoDB AUTO_INCREMENT=100 DEFAULT CHARSET=utf8mb4 comment '活动表';
 

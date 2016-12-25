@@ -82,6 +82,9 @@ public class ActivityController {
                     List<Integer> groupIdList = Lists.transform(Lists.newArrayList(Splitter.on(",").split(groupIds)), new Function<String, Integer>() {
                         @Override
                         public Integer apply(String input) {
+                            if(input == null || "null".equals(input) || "NULL".equals(input)){
+                                return 0;
+                            }
                             return Integer.valueOf(input);
                         }
                     });
@@ -114,6 +117,9 @@ public class ActivityController {
                 List<Integer> groupIdList = Lists.transform(Lists.newArrayList(Splitter.on(",").split(groupIds)), new Function<String, Integer>() {
                     @Override
                     public Integer apply(String input) {
+                        if(input == null || "null".equals(input) || "NULL".equals(input)){
+                            return 0;
+                        }
                         return Integer.valueOf(input);
                     }
                 });

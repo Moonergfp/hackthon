@@ -69,7 +69,9 @@ public class GroupService {
                 throw new RuntimeException("创建分组失败");
             }
         }
-        int num = activityDao.updateGroupList(activityId, StringUtils.join(groupIdList, ","));
+        String groupIdOrignal = activityDao.getById(activityId).getGroupIdList();
+        String groupIds = StringUtils.join(groupIdList, ",")+","+groupIdOrignal;
+        int num = activityDao.updateGroupList(activityId, groupIds);
         LogConstant.runLog.error("#GroupController.batchCreate#updateGroupList num={}", num);
         if (num <= 0) {
             throw new HackException("批量保存组列表失败");
